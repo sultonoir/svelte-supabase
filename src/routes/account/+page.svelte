@@ -12,10 +12,8 @@
 
 	let profileForm: HTMLFormElement;
 	let loading = false;
-	let fullName: string = profile?.full_name ?? '';
-	let username: string = profile?.username ?? '';
-	let website: string = profile?.website ?? '';
-	let avatarUrl: string = profile?.website ?? '';
+	let fullName: string = profile?.name;
+	let avatarUrl: string = profile?.image;
 
 	const handleSubmit: SubmitFunction = () => {
 		loading = true;
@@ -33,9 +31,9 @@
 	};
 </script>
 
-<div class="form-widget">
+<div class="flex flex-col gap-5 p-5">
 	<form
-		class="form-widget"
+		class="flex flex-col gap-5"
 		method="post"
 		action="?/update"
 		use:enhance={handleSubmit}
@@ -49,30 +47,26 @@
 				profileForm.requestSubmit();
 			}}
 		/>
-		<div>
+		<div class="flex flex-col gap-1">
 			<label for="email">Email</label>
-			<input id="email" type="text" value={session?.user.email} disabled />
+			<input id="email" type="text" value={session?.user.email} disabled class="input" />
 		</div>
 
-		<div>
-			<label for="fullName">Full Name</label>
-			<input id="fullName" name="fullName" type="text" value={form?.fullName ?? fullName} />
+		<div class="flex flex-col gap-1">
+			<label for="fullName">Name</label>
+			<input
+				id="fullName"
+				name="fullName"
+				type="text"
+				value={form?.fullName ?? fullName}
+				class="input"
+			/>
 		</div>
 
-		<div>
-			<label for="username">Username</label>
-			<input id="username" name="username" type="text" value={form?.username ?? username} />
-		</div>
-
-		<div>
-			<label for="website">Website</label>
-			<input id="website" name="website" type="url" value={form?.website ?? website} />
-		</div>
-
-		<div>
+		<div class="flex flex-col gap-1">
 			<input
 				type="submit"
-				class="button block primary"
+				class="btn-primary btn-default text-white"
 				value={loading ? 'Loading...' : 'Update'}
 				disabled={loading}
 			/>
@@ -81,7 +75,7 @@
 
 	<form method="post" action="?/signout" use:enhance={handleSignOut}>
 		<div>
-			<button class="button block" disabled={loading}>Sign Out</button>
+			<button class="btn-secondary btn-default w-full" disabled={loading}>Sign Out</button>
 		</div>
 	</form>
 </div>

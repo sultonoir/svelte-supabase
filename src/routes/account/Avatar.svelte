@@ -69,7 +69,7 @@
 		<img
 			src={avatarUrl}
 			alt={avatarUrl ? 'Avatar' : 'No image'}
-			class="avatar image"
+			class="rounded-full border border-border object-cover"
 			style="height: {size}em; width: {size}em;"
 		/>
 	{:else}
@@ -78,11 +78,11 @@
 	<input type="hidden" name="avatarUrl" value={url} />
 
 	<div style="width: {size}em;">
-		<label class="button primary block" for="single">
+		<label class="button primary block btn-primary btn-default" for="single">
 			{uploading ? 'Uploading ...' : 'Upload'}
 		</label>
 		<input
-			style="visibility: hidden; position:absolute;"
+			style="visibility: hidden"
 			type="file"
 			id="single"
 			accept="image/*"
