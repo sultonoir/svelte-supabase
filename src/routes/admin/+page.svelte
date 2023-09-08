@@ -1,85 +1,80 @@
 <!-- // src/routes/auth/+page.svelte -->
-<script>
+<script lang="ts">
 	import { goto } from '$app/navigation';
-	import TipTap from '$lib/TipTap.svelte';
-	import { redirect } from '@sveltejs/kit';
+	import Theme from '$lib/Theme.svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
+	import AdminNavbar from './AdminNavbar.svelte';
+	import AdminPost from './AdminPost.svelte';
 
 	export let data;
-	let { supabase } = data;
-	$: ({ supabase } = data);
+	let { supabase, profile, session, guest } = data;
+	$: ({ supabase, profile, session, guest } = data);
+	let url: string = profile?.image as string;
+	let bellNotifi: boolean = profile?.hasNotifi as boolean;
+	let avatarUrl: string;
+	let blog: boolean;
+	let project: boolean;
 
-	let email = '';
-	let password = '';
-	let loading = false;
-
-	const handleSignUp = async () => {
+	const downloadImage = async (path: string) => {
 		try {
-			loading = true;
-			await supabase.auth.signUp({
-				email,
-				password
-			});
-			redirect(303, '/account');
-		} catch (error) {
-			// Tangani kesalahan di sini, misalnya dengan menampilkan pesan kesalahan kepada pengguna
-			console.error('Terjadi kesalahan saat mendaftar:', error);
-		} finally {
-			loading = false;
-		}
-	};
+			const { data, error } = await supabase.storage.from('avatars').download(path);
 
-	const handleSignIn = async () => {
-		loading = true; // Anda harus mengubah loading menjadi true di sini
-
-		try {
-			const { data } = await supabase.auth.signInWithPassword({ email, password });
-
-			if (data) {
-				goto('/account'); // Arahkan ke halaman akun
+			if (error) {
+				throw error;
 			}
+
+			const url = URL.createObjectURL(data);
+			avatarUrl = url;
 		} catch (error) {
-			console.error('Terjadi kesalahan saat masuk:', error);
-		} finally {
-			loading = false;
+			if (error instanceof Error) {
+				console.log('Error downloading image: ', error.message);
+			}
 		}
 	};
 
+	if (url) downloadImage(url);
+
+	//! handle
+
+	const handleBlog = () => {
+		blog = !blog;
+		project = false;
+	};
 	const handleSignOut = async () => {
 		await supabase.auth.signOut();
+		return goto('/sultonoir');
+	};
+
+	const handleProject = () => {
+		project = !project;
+		blog = false;
 	};
 </script>
 
-<form on:submit={handleSignUp} class="flex flex-col p-5 gap-5">
-	<input
-		name="email"
-		disabled={loading}
-		type="email"
-		bind:value={email}
-		placeholder="Email"
-		class="input"
-	/>
-	<input
-		name="pasword"
-		disabled={loading}
-		type="password"
-		bind:value={password}
-		placeholder="Password"
-		class="input"
-	/>
-
-	<button disabled={loading} class="btn-primary btn-default text-white">Sign up</button>
-</form>
-<TipTap />
-
-<h1>memek</h1>
-<button on:click={handleSignIn}>Sign in</button>
-<button on:click={handleSignOut}>Sign out</button>
-
-<style>
-	::-ms-reveal {
-		border: 1px solid white;
-		border-radius: 50%;
-		box-shadow: 0 0 3px currentColor;
-		color: currentColor;
-	}
-</style>
+{#if profile}
+	<main>
+		<AdminNavbar {handleSignOut} {avatarUrl} bind:bellNotifi guests={guest} />
+		<div class="container mx-auto mt-2">
+			<div
+				class="flex flex-row justify-evenly bg-gray-100 dark:bg-[#232425] dark:border-black/40 dark:bg-opacity-75 p-3 rounded-md"
+			>
+				<button
+					on:click={handleBlog}
+					class={`${blog && 'bg-primary text-white'} px-4 py-2 rounded-md font-semibold`}
+					>Create blog</button
+				>
+				<button
+					on:click={handleProject}
+					class={`${project && 'bg-primary text-white'} px-4 py-2 rounded-md font-semibold`}
+					>Create Project</button
+				>
+			</div>
+			{#if blog}
+				<AdminPost {supabase} id={profile.id} />
+			{/if}
+		</div>
+		<div class="fixed bottom-0 right-0">
+			<Theme />
+		</div>
+	</main>
+{/if}

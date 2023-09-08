@@ -12,8 +12,8 @@
 
 	let profileForm: HTMLFormElement;
 	let loading = false;
-	let fullName: string = profile?.name;
-	let avatarUrl: string = profile?.image;
+	let fullName: string = profile?.name as string;
+	let avatarUrl: string = profile?.image as string;
 
 	const handleSubmit: SubmitFunction = () => {
 		loading = true;
@@ -31,7 +31,9 @@
 	};
 </script>
 
-<div class="flex flex-col gap-5 p-5">
+<div
+	class="flex flex-col gap-5 p-5 w-[300px] border border-border fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+>
 	<form
 		class="flex flex-col gap-5"
 		method="post"

@@ -12,9 +12,16 @@ export const load = async ({ fetch, data, depends }) => {
 		serverSession: data.session
 	});
 
+	const Admin = supabase
+		.channel('custom-all-channel')
+		.on('postgres_changes', { event: '*', schema: 'public', table: 'Admin' }, (payload) => {
+			console.log('Change received!', payload);
+		})
+		.subscribe();
+
 	const {
 		data: { session }
 	} = await supabase.auth.getSession();
 
-	return { supabase, session };
+	return { supabase, session, Admin };
 };

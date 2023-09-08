@@ -24,11 +24,10 @@ export const actions = {
 
 		const session = await getSession();
 
-		const { error } = await supabase.from('Admin').upsert({
+		const { error } = await supabase.from('Admin').update({
 			id: session?.user.id,
 			name: fullName,
 			image: avatarUrl,
-			updatedAt: new Date(),
 			hasNotifi: false,
 			email: session?.user.email
 		});

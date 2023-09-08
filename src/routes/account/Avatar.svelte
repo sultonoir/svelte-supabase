@@ -78,7 +78,7 @@
 	<input type="hidden" name="avatarUrl" value={url} />
 
 	<div style="width: {size}em;">
-		<label class="button primary block btn-primary btn-default" for="single">
+		<label class="text-white btn-primary btn-default" for="single">
 			{uploading ? 'Uploading ...' : 'Upload'}
 		</label>
 		<input

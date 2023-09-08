@@ -12,7 +12,15 @@ export const actions = {
 			return fail(500, { message: 'salah', error });
 		}
 
-		console.log(admin);
+		const { error: er } = await supabase
+			.from('Admin')
+			.update({ hasNotifi: true })
+			.eq('email', 'sulton@gmail.com')
+			.select();
+
+		if (er) {
+			return fail(500, { message: 'salah admin', er });
+		}
 
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
@@ -24,6 +32,7 @@ export const actions = {
 			.from('Guest')
 			.insert({ email: email, subject: subject, message: message, adminId: adminId })
 			.select();
+
 		if (err) {
 			return fail(500, { message: 'salah', err });
 		}
